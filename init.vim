@@ -20,7 +20,7 @@ Plug 'tomasr/molokai'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'davidhalter/jedi-vim'
-" Plug 'mattn/emmet-vim'
+Plug 'mattn/emmet-vim'
 Plug 'moll/vim-node'
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
@@ -57,14 +57,16 @@ set splitright
 
 " LINTING
 let g:ale_fixers = {
-\  'javascript': ['prettier'],
+\  'javascript': ['prettier', 'remove_trailing_lines', 'trim_whitespace'],
+\  'javascript.jsx': ['prettier', 'remove_trailing_lines', 'trim_whitespace'],
 \  'scss': ['prettier'],
 \  'typescript': ['prettier', 'tslint'],
 \  'css': ['prettier'],
-\  'json': ['prettier']
+\  'json': ['prettier'],
+\  'python': ['black']
 \}
 let g:ale_linters = {
-\  'javascript': ['flow'],
+\  'javascript': ['flow', 'eslint'],
 \  'python': ['pyls'],
 \  'typescript': ['tslint', 'tsserver']
 \}
