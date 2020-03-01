@@ -8,6 +8,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-markdown'
 Plug 'tpope/vim-surround'
@@ -23,8 +24,15 @@ Plug 'moll/vim-node'
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
 Plug 'lifepillar/pgsql.vim'
-Plug 'SirVer/UltiSnips'
 Plug 'nvie/vim-flake8'
+" Plug 'styled-components/vim-styled-components', { 'branch': 'rewrite' }
+Plug 'leafgarland/typescript-vim'
+Plug 'flowtype/vim-flow'
+Plug 'SirVer/ultisnips'
+" Plug 'Shougo/deoplete.nvim'
+" Plug 'Shougo/neosnippet.vim'
+" Plug 'carlitux/deoplete-ternjs', { 'do': 'yarn global add tern' }
+Plug 'autozimu/LanguageClient-neovim', { 'do': 'yarn global add javascript-typescript-langserver' }
 call plug#end()
 
 " BASICS
@@ -45,7 +53,36 @@ set number relativenumber
 let g:ale_sign_column_always = 1
 " show file in terminal title
 set title
+set splitright
 
+
+" LINTING
+let g:ale_fixers = {
+\  'javascript': ['prettier', 'remove_trailing_lines', 'trim_whitespace'],
+\  'javascript.jsx': ['prettier', 'remove_trailing_lines', 'trim_whitespace'],
+\  'scss': ['prettier'],
+\  'typescript': ['prettier', 'tslint'],
+\  'css': ['prettier'],
+\  'json': ['prettier'],
+\  'python': ['black']
+\}
+let g:ale_linters = {
+\  'javascript': ['flow', 'eslint'],
+\  'python': ['pyls'],
+\  'typescript': ['tslint', 'tsserver']
+\}
+let g:ale_fix_on_save = 1
+let g:ale_javascript_prettier_use_local_config = 1
+let g:ale_echo_msg_format = '%linter% says %s'
+
+" SNIPPETS
+" let g:UltiSnipsExpandTrigger = "<tab>"
+" let g:UltiSnipsJumpForwardTrigger = "<tab>"
+" let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+" if has('nvim')
+" let g:UltiSnipsSnippetDirectories = ['~/UltiSnips']
+" endif
+let g:UltiSnipsEditSplit = 'context'
 
 " HIGHLIGHTING
 set hlsearch
@@ -98,6 +135,32 @@ let g:sql_type_default = 'pgsql'
 autocmd FileType matlab setlocal keywordprg=info\ octave\ --vi-keys\ --index-search
 autocmd FileType matlab setlocal commentstring=%\ %s
 
+" LSP
+let g:ale_completion_enabled = 1
+" https://fortes.com/2017/language-server-neovim/
+let g:LanguageClient_autoStart = 1
+let g:LanguageClient_serverCommands = {
+      \ 'javascript': ['javascript-typescript-stdio'],
+      \ 'javascript.jsx': ['javascript-typescript-stdio'],
+      \ 'typescript': ['javascript-typescript-stdio'],
+      \ 'python': ['pyls'],
+      \ }
+" autocmd FileType javascript setlocal omnifunc=LanguageClient#complete
+" autocmd FileType typescript setlocal omnifunc=LanguageClient#complete
+" autocmd FileType python setlocal omnifunc=LanguageClient#complete
+" if !executable('javascript-typescript-stdio')
+"   echo "javascript-typescript-stdio not installed!\n"
+" endif
+" nnoremap <leader>ld :call LanguageClient_textDocument_definition()<cr>
+" nnoremap <leader>lh :call LanguageClient_textDocument_hover()<cr>
+nnoremap <leader>lr :call LanguageClient_textDocument_rename()<cr>
+nnoremap <leader>lf :call LanguageClient_textDocument_documentSymbol()<cr>
+" set completeopt+=longest
+" ale-completion-completopt-bug - https://github.com/w0rp/ale/issues/1700
+set completeopt=menu,menuone,preview,noinsert
+nnoremap <leader>h :ALEHover<cr>
+nnoremap <leader>d :ALEGoToDefinition<cr>
+
 " SEARCH
 " case-sensitive only if has uppercase
 set ignorecase smartcase
@@ -112,6 +175,8 @@ nnoremap <leader>t :GFiles<CR>'tests/ \| 'spec/ \| 'unit/ \| 'spec.js
 nnoremap <leader>u :Ag <C-R><C-W><CR>
 nnoremap <leader>/ :Tag <CR>
 nnoremap <leader>b :Buffers<CR>
+
+nnoremap <leader>c :Ecomponent 
 
 " VIMRC
 " Source the vimrc after saving it
@@ -133,6 +198,9 @@ let g:netrw_browsex_viewer = 'xdg-open'
 com! FormatJSON %!python -m json.tool
 nnoremap =j :FormatJSON<CR>
 
+let g:user_emmet_expandabbr_key = '<C-e>'
+
+
 " neovim-specific
 " let g:python3_host_prog='/home/fred/.virtualenvs/globals/bin/python'
 
@@ -150,6 +218,9 @@ vnoremap <leader>P "+P
 nnoremap <leader>gb :Gblame<CR>
 nnoremap <leader>gm :Gmove 
 nnoremap <leader>gd :Gvdiff<CR>
+
+" Avoid problems with file watchers - see https://github.com/webpack/webpack/issues/781#issuecomment-95523711
+set backupcopy=yes
 
 colorscheme molokai
 let g:airline_theme='molokai'
