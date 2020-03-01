@@ -10,6 +10,7 @@ Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-markdown'
+Plug 'tpope/vim-surround'
 Plug 'airblade/vim-gitgutter'
 Plug 'skywind3000/asyncrun.vim'
 Plug 'w0rp/ale'
@@ -92,6 +93,10 @@ let g:javascript_plugin_flow = 1
 
 " SQL/postgresql
 let g:sql_type_default = 'pgsql'
+
+" Matlab/Octave
+autocmd FileType matlab setlocal keywordprg=info\ octave\ --vi-keys\ --index-search
+autocmd FileType matlab setlocal commentstring=%\ %s
 
 " SEARCH
 " case-sensitive only if has uppercase
